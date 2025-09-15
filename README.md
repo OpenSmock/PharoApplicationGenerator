@@ -16,7 +16,7 @@ Script for step 2:
 ```smalltalk
 Metacello new
     baseline: 'ApplicationGenerator';
-    repository: 'github://tesonep/PharoApplicationGenerator:master/src';
+    repository: 'github://OpenSmock/PharoApplicationGenerator:master/src';
     load.
 ```
 
@@ -49,7 +49,7 @@ For a deeper example for a whole application, you can check the usage in the Tak
 ```smalltalk
 Metacello new
 	baseline: 'ApplicationGenerator';
-	repository: 'github://tesonep/PharoApplicationGenerator/src';
+	repository: 'github://OpenSmock/PharoApplicationGenerator/src';
 	load
 ```
 
