@@ -50,6 +50,26 @@ AppGeneratorWindowsGenerator >> copySources [
 		to: srcDir / 'main.c'
 ]
 
+{ #category : 'copying' }
+AppGeneratorWindowsGenerator >> copyVM [
+
+	| externalDir includeDir |
+
+	externalDir := outputDirectory / 'external'.
+	externalDir ensureCreateDirectory.
+
+	self 
+		copy: self templateDirectory / 'external' / 'latest10.zip' 
+		to: externalDir / 'latest10.zip'.
+
+	includeDir := outputDirectory / 'external' / 'include'.
+	includeDir ensureCreateDirectory.
+
+	self 
+		copy: self templateDirectory / 'external' / 'include' / 'latest10.zip' 
+		to: includeDir / 'latest10.zip'.
+]
+
 { #category : 'utilities' }
 AppGeneratorWindowsGenerator >> fillWithDefaults [
 	
@@ -75,6 +95,7 @@ AppGeneratorWindowsGenerator >> generate [
 	self copyIcon.
 	self copyIncludes.
 	self copySources.
+	self copyVM.
 	self generateCMakeScript.
 	
 	self generateArtifactScript.

@@ -63,9 +63,8 @@ make_directory($\{CMAKE_CURRENT_BINARY_DIR}/build/resources)
 # Adding a task to download the vm
 add_custom_command(
 	OUTPUT $\{CMAKE_CURRENT_BINARY_DIR}/build/vm/PharoVMCore.dll
-	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/Windows-x86_64/{VMZipFile}
-	COMMAND unzip {VMZipFile}
-	COMMAND rm {VMZipFile}
+	COMMAND unzip $\{CMAKE_CURRENT_BINARY_DIR}/external/latest10.zip
+	COMMAND rm $\{CMAKE_CURRENT_BINARY_DIR}/external/latest10.zip
 	WORKING_DIRECTORY $\{CMAKE_CURRENT_BINARY_DIR}/build/vm
 	COMMENT "Downloading Pharo 10 VM (headless)")
 
@@ -83,9 +82,8 @@ add_custom_command(
 #
 add_custom_command(
 	OUTPUT  $\{CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
-	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/Windows-x86_64/include/{VMIncludeZipFile}
-	COMMAND unzip {VMIncludeZipFile}
-	COMMAND rm {VMIncludeZipFile}
+	COMMAND unzip $\{CMAKE_CURRENT_BINARY_DIR}/external/include/latest10.zip
+	COMMAND rm $\{CMAKE_CURRENT_BINARY_DIR}/external/include/latest10.zip
 	WORKING_DIRECTORY $\{CMAKE_CURRENT_BINARY_DIR}/build
 	COMMENT "Downloading Pharo 10 VM Headers")
 
@@ -94,7 +92,7 @@ add_custom_command(
 #
 add_custom_command(
 	OUTPUT  
-		$\{CMAKE_CURRENT_BINARY_DIR}/build/lib/libPharoVMCore.a
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/lib/libPharoVMCore.a
     	$\{CMAKE_CURRENT_BINARY_DIR}/build/output/PharoVMCore.dll		
 	COMMAND bash -c "$\{CMAKE_COMMAND} -E make_directory $\{CMAKE_CURRENT_BINARY_DIR}/build/lib"
 	COMMAND bash -c "$\{CMAKE_COMMAND} -E make_directory $\{CMAKE_CURRENT_BINARY_DIR}/build/output"
