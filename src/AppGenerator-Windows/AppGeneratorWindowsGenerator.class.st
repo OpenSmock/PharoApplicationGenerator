@@ -62,14 +62,14 @@ AppGeneratorWindowsGenerator >> copyVM [
 	externalDir ensureCreateDirectory.
 
 	self 
-		copy: self vmDirectory / 'latest10.zip' 
+		copy: (self vmDirectory asFileReference / 'latest10.zip') 
 		to: externalDir / 'latest10.zip'.
 
 	includeDir := outputDirectory / 'external' / 'include'.
 	includeDir ensureCreateDirectory.
 
 	self 
-		copy: self vmDirectory / 'latest10.zip' 
+		copy: (self vmDirectory asFileReference) / 'latest10_include.zip' 
 		to: includeDir / 'latest10.zip'.
 ]
 
