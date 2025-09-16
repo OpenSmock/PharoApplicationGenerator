@@ -1,6 +1,9 @@
 Class {
 	#name : 'AppGeneratorWindowsGenerator',
 	#superclass : 'AppGeneratorAbstractGenerator',
+	#instVars : [
+		'vmDirectory'
+	],
 	#category : 'AppGenerator-Windows',
 	#package : 'AppGenerator-Windows'
 }
@@ -59,14 +62,14 @@ AppGeneratorWindowsGenerator >> copyVM [
 	externalDir ensureCreateDirectory.
 
 	self 
-		copy: self templateDirectory / 'external' / 'latest10.zip' 
+		copy: self vmDirectory / 'latest10.zip' 
 		to: externalDir / 'latest10.zip'.
 
 	includeDir := outputDirectory / 'external' / 'include'.
 	includeDir ensureCreateDirectory.
 
 	self 
-		copy: self templateDirectory / 'external' / 'include' / 'latest10.zip' 
+		copy: self vmDirectory / 'latest10.zip' 
 		to: includeDir / 'latest10.zip'.
 ]
 
@@ -145,4 +148,21 @@ AppGeneratorWindowsGenerator >> iconFile [
 AppGeneratorWindowsGenerator >> platformName [
 	
 	^ 'Windows'
+]
+
+{ #category : 'accessing' }
+AppGeneratorWindowsGenerator >> vmDirectory [
+
+	vmDirectory ifNil:[ vmDirectory := self templateDirectory].
+	^vmDirectory
+
+	
+]
+
+{ #category : 'accessing' }
+AppGeneratorWindowsGenerator >> vmDirectory: aDirPath [
+
+	vmDirectory := aDirPath 
+
+	
 ]
