@@ -18,28 +18,27 @@ AppGeneratorWindowsGenerator >> copyIncludes [
 	includeDir := outputDirectory / 'include'.
 	includeDir ensureCreateDirectory.
 	
-	self copy: self templateDirectory / 'include' / 'resources.h' to: includeDir / 'resources.h'.
+	self copy: 'include/resources.h' to: includeDir / 'resources.h'.
 ]
 
 { #category : 'copying' }
 AppGeneratorWindowsGenerator >> copySources [
 
-	| srcDir templateSrc |
+	| srcDir |
 
-	templateSrc := self templateDirectory / 'src'.
 	srcDir := outputDirectory / 'src'.
 	srcDir ensureCreateDirectory.
 
 	self
-		copy: templateSrc / 'embeddedImage.c'
+		copy: 'src/embeddedImage.c'
 		to: srcDir / 'embeddedImage.c'.
 
 	self
-		copyTemplate: templateSrc / 'resources.rc.in'
+		copyTemplate: 'src/resources.rc.in'
 		to: srcDir / 'resources.rc.in'.
 
 	self
-		copyTemplate: templateSrc / 'main.c.template'
+		copyTemplate: 'src/main.c.template'
 		to: srcDir / 'main.c'
 ]
 
@@ -87,7 +86,7 @@ AppGeneratorWindowsGenerator >> generateArtifactScript [
 AppGeneratorWindowsGenerator >> generateCMakeScript [
 
 	self
-		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
+		copyTemplate: 'CMakeLists.txt.template'
 		to: outputDirectory / 'CMakeLists.txt'
 ]
 
@@ -95,7 +94,7 @@ AppGeneratorWindowsGenerator >> generateCMakeScript [
 AppGeneratorWindowsGenerator >> generateInstallerScript [
 
 	self
-		copyTemplate: self templateDirectory / 'buildWindowsPackage.ps1.template'
+		copyTemplate: 'buildWindowsPackage.ps1.template'
 		to: outputDirectory / 'buildWindowsPackage.ps1'
 ]
 
@@ -118,7 +117,7 @@ AppGeneratorWindowsGenerator >> generateParametersString [
 AppGeneratorWindowsGenerator >> generateZipScript [
 
 	self
-		copyTemplate: self templateDirectory / 'buildZip.ps1.template'
+		copyTemplate: 'buildZip.ps1.template'
 		to: outputDirectory / 'buildZip.ps1'
 ]
 

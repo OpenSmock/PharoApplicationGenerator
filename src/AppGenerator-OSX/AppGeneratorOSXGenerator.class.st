@@ -28,11 +28,11 @@ AppGeneratorOSXGenerator >> copyIncludes [
 	includeDir ensureCreateDirectory.
 	
 	self 
-		copy: self templateDirectory / 'include' / 'loading_window.h' 
+		copy: 'include/loading_window.h' 
 		to: includeDir / 'loading_window.h'.
 
 	self 
-		copyTemplate: self templateDirectory / 'include' / 'loading_window_config.h.template' 
+		copyTemplate: 'include/loading_window_config.h.template' 
 		to: includeDir / 'loading_window_config.h'.
 ]
 
@@ -48,23 +48,22 @@ AppGeneratorOSXGenerator >> copyInstallerBackground [
 { #category : 'copying' }
 AppGeneratorOSXGenerator >> copySources [
 
-	| srcDir templateSrc |
+	| srcDir |
 
-	templateSrc := self templateDirectory / 'src'.
 	srcDir := outputDirectory / 'src'.
 	srcDir ensureCreateDirectory.
 
 	self
-		copyTemplate: templateSrc / 'main.c.template'
+		copyTemplate: 'src/main.c.template'
 		to: srcDir / 'main.c'.
 		
-	self copy: templateSrc / 'loadingWindow.c'
+	self copy: 'src/loadingWindow.c'
 		to: srcDir / 'loadingWindow.c'.
 
-	self copy: templateSrc / 'loadingWindow_primitives.c'
+	self copy: 'src/loadingWindow_primitives.c'
 		to: srcDir / 'loadingWindow_primitives.c'.
 	
-	self copy: templateSrc / 'loadingWindow.m'
+	self copy: 'src/loadingWindow.m'
 		to: srcDir / 'loadingWindow.m'.
 
 ]
@@ -118,7 +117,7 @@ AppGeneratorOSXGenerator >> generate [
 AppGeneratorOSXGenerator >> generateBuildScript [
 
 	self
-		copyTemplate: self templateDirectory / 'build.sh.template'
+		copyTemplate: 'build.sh.template'
 		to: outputDirectory / 'build.sh'
 ]
 
@@ -126,7 +125,7 @@ AppGeneratorOSXGenerator >> generateBuildScript [
 AppGeneratorOSXGenerator >> generateCMakeScript [
 
 	self
-		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
+		copyTemplate: 'CMakeLists.txt.template'
 		to: outputDirectory / 'CMakeLists.txt'
 ]
 
@@ -135,7 +134,7 @@ AppGeneratorOSXGenerator >> generatePListIn: appDirectory [
 
 	(appDirectory / 'Contents') ensureCreateDirectory.
 	self
-		copyTemplate: self templateDirectory / 'Info.plist.template'
+		copyTemplate: 'Info.plist.template'
 		to: appDirectory / 'Contents' / 'Info.plist'
 ]
 

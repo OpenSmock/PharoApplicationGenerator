@@ -63,11 +63,17 @@ AppGeneratorAbstractGenerator >> appName [
 	^ properties at: #AppName
 ]
 
+{ #category : 'accessing' }
+AppGeneratorAbstractGenerator >> commonTemplateDirectory [
+	
+	^ self class repositoryLocation / 'templates' / 'common'
+]
+
 { #category : 'copying' }
 AppGeneratorAbstractGenerator >> copy: source to: dest [
 
 	dest ensureDelete.
-	source copyTo: dest
+	(self resolveSource: source asFileReference) copyTo: dest
 ]
 
 { #category : 'external resources' }
@@ -84,7 +90,7 @@ AppGeneratorAbstractGenerator >> copyExternalResources [
 AppGeneratorAbstractGenerator >> copyTemplate: inputTemplate to: outputFile [
 
 	| generatedContent template |
-	template := inputTemplate contents.
+	template := (self resolveSource: inputTemplate asFileReference) contents.
 	generatedContent := template format: properties.
 	outputFile writeStreamDo: [ :s |
 		s truncate.
@@ -181,6 +187,28 @@ AppGeneratorAbstractGenerator >> outputDirectory: aFileReference [
 AppGeneratorAbstractGenerator >> properties: aCollection [ 
 	
 	properties := aCollection
+]
+
+{ #category : 'as yet unclassified' }
+AppGeneratorAbstractGenerator >> resolveSource: aFileReference [
+
+	| templateBased commonBased |
+
+	aFileReference exists ifTrue: [ ^ aFileReference ].
+
+	templateBased := self templateDirectory withPath:
+		                 (self templateDirectory path resolvePath:
+			                  aFileReference path).
+
+	templateBased exists ifTrue: [ ^ templateBased ].
+
+	commonBased := self commonTemplateDirectory withPath:
+		               (self commonTemplateDirectory path resolvePath:
+			                aFileReference path).
+			
+	commonBased exists ifTrue: [ ^ commonBased ].
+	
+	self error: ('Could not find in {1}, {2} or {3}') format: { aFileReference. templateBased. commonBased }. 
 ]
 
 { #category : 'accessing' }
