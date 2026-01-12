@@ -6,13 +6,6 @@ Class {
 }
 
 { #category : 'copying' }
-AppGeneratorWindowsGenerator >> copy: source to: dest [
-
-	dest ensureDelete.
-	source copyTo: dest
-]
-
-{ #category : 'copying' }
 AppGeneratorWindowsGenerator >> copyIcon [
 
 	self copy: self iconFile to: outputDirectory / 'icon.ico'

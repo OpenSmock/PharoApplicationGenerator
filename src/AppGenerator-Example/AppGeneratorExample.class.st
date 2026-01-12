@@ -70,6 +70,34 @@ AppGeneratorExample class >> generateOSXExampleWithParameter [
 ]
 
 { #category : 'example' }
+AppGeneratorExample class >> generateOSXExampleWithProgressBar [
+
+	<script>
+
+	AppGeneratorOSXGenerator new
+		properties: {
+			#AppName -> 'AppGeneratorExample'.
+			#InfoString -> 'An Example of an App Generator'.
+			#BundleIdentifier -> 'org.pharo.appGeneratorExample'.
+			#ShortVersion -> '1.0.0'.
+			#DisplayName -> 'TestApp'.
+			#CommandLineHandler -> 'appGeneratorExampleWithProgressBar'.
+			#CompanyName -> 'Pharo Consortium'.
+			#LoadingWindow -> true.
+			#LoadingWindowBarX -> 45.
+			#LoadingWindowBarY -> 156.
+			#LoadingWindowBarWidth -> 493.
+			#LoadingWindowBarHeight -> 33.					
+			#LoadingWindowBarMargin -> 2.
+			#LoadingWindowImageLoadingPercentage -> 50.
+			#LoadingWindowImage -> 'loading-window.png'.
+		} asDictionary;
+		outputDirectory: FileLocator workingDirectory / 'appGeneratorExample' / 'build';
+		addExternalFile: AppGeneratorOSXGenerator repositoryLocation / 'exampleResources' / 'loading-window.png';
+		generate
+]
+
+{ #category : 'example' }
 AppGeneratorExample class >> generateWindowsExample [
 
 	<script>

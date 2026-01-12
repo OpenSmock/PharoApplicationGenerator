@@ -20,12 +20,53 @@ AppGeneratorOSXGenerator >> copyIconSetIn: appDirectory [
 ]
 
 { #category : 'copying' }
+AppGeneratorOSXGenerator >> copyIncludes [
+
+	| includeDir |
+	
+	includeDir := outputDirectory / 'include'.
+	includeDir ensureCreateDirectory.
+	
+	self 
+		copy: self templateDirectory / 'include' / 'loading_window.h' 
+		to: includeDir / 'loading_window.h'.
+
+	self 
+		copyTemplate: self templateDirectory / 'include' / 'loading_window_config.h.template' 
+		to: includeDir / 'loading_window_config.h'.
+]
+
+{ #category : 'copying' }
 AppGeneratorOSXGenerator >> copyInstallerBackground [
 	
 	| dst |
 	dst := outputDirectory / 'installer-background.png'.	
 	dst ensureDelete.
 	(properties at: #InstallerBackgroundFile) copyTo: dst 
+]
+
+{ #category : 'copying' }
+AppGeneratorOSXGenerator >> copySources [
+
+	| srcDir templateSrc |
+
+	templateSrc := self templateDirectory / 'src'.
+	srcDir := outputDirectory / 'src'.
+	srcDir ensureCreateDirectory.
+
+	self
+		copyTemplate: templateSrc / 'main.c.template'
+		to: srcDir / 'main.c'.
+		
+	self copy: templateSrc / 'loadingWindow.c'
+		to: srcDir / 'loadingWindow.c'.
+
+	self copy: templateSrc / 'loadingWindow_primitives.c'
+		to: srcDir / 'loadingWindow_primitives.c'.
+	
+	self copy: templateSrc / 'loadingWindow.m'
+		to: srcDir / 'loadingWindow.m'.
+
 ]
 
 { #category : 'external resources' }
@@ -62,9 +103,15 @@ AppGeneratorOSXGenerator >> generate [
 		
 	self copyIconSetIn: appDirectory. 
 	self generatePListIn: appDirectory.
-	self copyInstallerBackground.
+
+	self 
+		copyInstallerBackground;
+		copySources;
+		copyIncludes.
 	
-	self generateBuildScript.
+	self 
+		generateBuildScript;
+		generateCMakeScript
 ]
 
 { #category : 'generating' }
@@ -73,6 +120,14 @@ AppGeneratorOSXGenerator >> generateBuildScript [
 	self
 		copyTemplate: self templateDirectory / 'build.sh.template'
 		to: outputDirectory / 'build.sh'
+]
+
+{ #category : 'generation' }
+AppGeneratorOSXGenerator >> generateCMakeScript [
+
+	self
+		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
+		to: outputDirectory / 'CMakeLists.txt'
 ]
 
 { #category : 'generating' }

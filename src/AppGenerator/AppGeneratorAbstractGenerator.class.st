@@ -63,6 +63,13 @@ AppGeneratorAbstractGenerator >> appName [
 	^ properties at: #AppName
 ]
 
+{ #category : 'copying' }
+AppGeneratorAbstractGenerator >> copy: source to: dest [
+
+	dest ensureDelete.
+	source copyTo: dest
+]
+
 { #category : 'external resources' }
 AppGeneratorAbstractGenerator >> copyExternalResources [
 	
@@ -118,6 +125,20 @@ AppGeneratorAbstractGenerator >> fillWithDefaults [
 	properties at: #VMIncludeZipFile ifAbsentPut: 'latest10.zip'.
 	properties at: #VMZipFile ifAbsentPut: 'latest10.zip'.
 	properties at: #VMType ifAbsentPut: 'headless'.
+	
+	"If the VM is headless we will not be in InteractiveSession"
+	(properties at: #VMType) = 'headless' 
+		ifTrue: [ properties at: #IsInteractiveSession ifAbsentPut: false ]
+		ifFalse: [ properties at: #IsInteractiveSession ifAbsentPut: true ].
+	
+	properties at: #LoadingWindow ifAbsentPut: false.
+	properties at: #LoadingWindowBarX ifAbsentPut: 0.
+	properties at: #LoadingWindowBarY ifAbsentPut: 0.
+	properties at: #LoadingWindowBarWidth ifAbsentPut: 0.
+	properties at: #LoadingWindowBarHeight ifAbsentPut: 0.
+	properties at: #LoadingWindowBarMargin ifAbsentPut: 0.
+	properties at: #LoadingWindowImageLoadingPercentage ifAbsentPut: 0.
+	properties at: #LoadingWindowImage ifAbsentPut: ''.
 	
 	properties at: #Parameters ifAbsentPut: #(  ).
 	self generateParametersString
