@@ -26,7 +26,7 @@ int usableHeight;
 int numberOfSquares;
 int minimunChangeUpdate;
 
-SDL_Color blockColor = {0, 0, 0, 255};
+SDL_Color blockColor = { LOADING_BAR_COLOR_R, LOADING_BAR_COLOR_G, LOADING_BAR_COLOR_B, LOADING_BAR_COLOR_A }; 
 
 void releaseResources(){
 	if(splashTexture){

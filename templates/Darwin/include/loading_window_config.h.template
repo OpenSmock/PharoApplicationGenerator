@@ -10,3 +10,8 @@
 #define LOADING_BAR_IMAGE_LOADING_PERCENTAGE	{LoadingWindowImageLoadingPercentage}
 
 #define LOADING_WINDOW_IMAGE					"{LoadingWindowImage}"
+
+#define LOADING_BAR_COLOR_R						{LoadingWindowBarColorRed}
+#define LOADING_BAR_COLOR_G						{LoadingWindowBarColorGreen}
+#define LOADING_BAR_COLOR_B						{LoadingWindowBarColorBlue}
+#define LOADING_BAR_COLOR_A						{LoadingWindowBarColorAlpha}

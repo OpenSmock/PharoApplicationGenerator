@@ -10,6 +10,7 @@ APP_NAME={AppName}
 APP_BUNDLE=$APP_NAME.app
 DMG_NAME=$APP_NAME-Installer.dmg
 VM_TYPE={VMType}
+: "$\{JUST_BUILD:=0}"
 
 # To create the DMG we need the create-dmg tool, you can get it from brew
 # brew install create-dmg
@@ -33,7 +34,9 @@ mkdir -p $APP_BUNDLE/Contents/MacOS/Plugins
 cp -Rf build/output/* $APP_BUNDLE/Contents/MacOS/
 cp -Rf build/vm/Pharo.app/Contents/MacOS/Plugins/* $APP_BUNDLE/Contents/MacOS/Plugins/
 
-exit
+if [ $JUST_BUILD -ne 0 ]; then
+	exit
+fi
 
 #Ad Hoc Signing.
 codesign --force --deep -s - $APP_BUNDLE
