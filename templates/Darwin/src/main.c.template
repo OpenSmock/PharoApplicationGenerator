@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <SDL2/SDL.h>
+#include "pharovm/pharo.h"
+#include "pharovm/pharoClient.h"
+#include "pharovm/imageAccess.h"
+#include "loading_window.h"
+
+VMErrorCode	vm_parameters_init(VMParameters* parameters);
+
+int main(int argc, char *argv[], const char *env[])\{
+
+	/*
+	 * I am creating a VMParameters with the information
+	 * that I want to send to the image.
+	 */
+	VMParameters parameters = \{};
+	vm_parameters_init(&parameters);
+	
+	parameters.environmentVector = env;
+
+	vm_parameters_parse(argc, argv, &parameters);
+
+	/*
+	 * We set if we are in interactiveSession (the image will open the World, as --interactive will be added). 
+	 * Usually we don't want this, the default is false.
+	 */
+	parameters.isInteractiveSession = {IsInteractiveSession};
+
+	if(LOADING_BAR_SHOW)\{
+		currentFileAccessHandler()->imageReportProgress = loading_window_imageReportProgress;
+		loading_window_open();
+	}
+
+	int exitCode = vm_main_with_parameters(&parameters);
+	vm_parameters_destroy(&parameters);
+	return exitCode;
+}

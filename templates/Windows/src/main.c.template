@@ -56,11 +56,11 @@ int main(int argc, char *argv[], const char *env[])\{
 	vm_parameters_parse(5, (const char**)args, &parameters);
 
 	/*
-	 * I force the vm to start in a non interactive Session.
+	 * I force the vm to start in a non-interactive Session.
 	 * As the VM tries to detect if launched from the console or from the desktop.
 	 * In an interactive session the image opens a window with the Pharo World.
 	 */
-	parameters.isInteractiveSession = false;
+	parameters.isInteractiveSession = {IsInteractiveSession};
 
 	int exitCode = vm_main_with_parameters(&parameters);
 	vm_parameters_destroy(&parameters);

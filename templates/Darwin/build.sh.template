@@ -18,6 +18,10 @@ VM_TYPE={VMType}
 rm -f -R dmg
 mkdir -p dmg
 rm -f $DMG_NAME
+rm -f -R build
+
+cmake -S . -B .
+cmake --build .
 
 mkdir -p $APP_BUNDLE/Contents/Resources/
 
@@ -25,24 +29,11 @@ cp -f $IMAGE_DIR/*.sources $APP_BUNDLE/Contents/Resources/
 cp -f $IMAGE_DIR/$CHANGES_NAME $APP_BUNDLE/Contents/Resources/
 cp -f $IMAGE_DIR/$IMAGE_NAME $APP_BUNDLE/Contents/Resources/
 
-#Downloading Pharo VM
-if [ ! -d "./pharo-vm" ] 
-then
-	mkdir pharo-vm
-    pushd pharo-vm
-    if [ "$VM_TYPE" = "headless" ]; then
-      curl --output vm.zip https://files.pharo.org/vm/pharo-spur64-headless/$(uname -s)-$(uname -m)/{VMZipFile}
-    else
-      curl --output vm.zip https://files.pharo.org/vm/pharo-spur64/$(uname -s)-$(uname -m)/stable10.zip
-    fi
-    unzip vm.zip 
-    popd
-fi
+mkdir -p $APP_BUNDLE/Contents/MacOS/Plugins
+cp -Rf build/output/* $APP_BUNDLE/Contents/MacOS/
+cp -Rf build/vm/Pharo.app/Contents/MacOS/Plugins/* $APP_BUNDLE/Contents/MacOS/Plugins/
 
-mkdir -p $APP_BUNDLE/Contents/MacOS
-cp -Rf pharo-vm/Pharo.app/Contents/MacOS/* $APP_BUNDLE/Contents/MacOS/
-
-#codesign -dv -r- $APP_BUNDLE
+exit
 
 #Ad Hoc Signing.
 codesign --force --deep -s - $APP_BUNDLE
