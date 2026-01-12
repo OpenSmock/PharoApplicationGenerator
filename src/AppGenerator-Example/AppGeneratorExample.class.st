@@ -91,6 +91,10 @@ AppGeneratorExample class >> generateOSXExampleWithProgressBar [
 			#LoadingWindowBarMargin -> 2.
 			#LoadingWindowImageLoadingPercentage -> 50.
 			#LoadingWindowImage -> 'loading-window.png'.
+			#LoadingWindowBarColorRed -> 0.
+			#LoadingWindowBarColorGreen -> 0.
+			#LoadingWindowBarColorBlue -> 0.
+			#LoadingWindowBarColorAlpha -> 128.
 		} asDictionary;
 		outputDirectory: FileLocator workingDirectory / 'appGeneratorExample' / 'build';
 		addExternalFile: AppGeneratorOSXGenerator repositoryLocation / 'exampleResources' / 'loading-window.png';

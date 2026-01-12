@@ -139,6 +139,10 @@ AppGeneratorAbstractGenerator >> fillWithDefaults [
 	properties at: #LoadingWindowBarMargin ifAbsentPut: 0.
 	properties at: #LoadingWindowImageLoadingPercentage ifAbsentPut: 0.
 	properties at: #LoadingWindowImage ifAbsentPut: ''.
+	properties at: #LoadingWindowBarColorRed ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorGreen ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorBlue ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorAlpha ifAbsentPut: 255.
 	
 	properties at: #Parameters ifAbsentPut: #(  ).
 	self generateParametersString
