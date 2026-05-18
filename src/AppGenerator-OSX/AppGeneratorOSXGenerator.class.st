@@ -20,12 +20,52 @@ AppGeneratorOSXGenerator >> copyIconSetIn: appDirectory [
 ]
 
 { #category : 'copying' }
+AppGeneratorOSXGenerator >> copyIncludes [
+
+	| includeDir |
+	
+	includeDir := outputDirectory / 'include'.
+	includeDir ensureCreateDirectory.
+	
+	self 
+		copy: 'include/loading_window.h' 
+		to: includeDir / 'loading_window.h'.
+
+	self 
+		copyTemplate: 'include/loading_window_config.h.template' 
+		to: includeDir / 'loading_window_config.h'.
+]
+
+{ #category : 'copying' }
 AppGeneratorOSXGenerator >> copyInstallerBackground [
 	
 	| dst |
 	dst := outputDirectory / 'installer-background.png'.	
 	dst ensureDelete.
 	(properties at: #InstallerBackgroundFile) copyTo: dst 
+]
+
+{ #category : 'copying' }
+AppGeneratorOSXGenerator >> copySources [
+
+	| srcDir |
+
+	srcDir := outputDirectory / 'src'.
+	srcDir ensureCreateDirectory.
+
+	self
+		copyTemplate: 'src/main.c.template'
+		to: srcDir / 'main.c'.
+		
+	self copy: 'src/loadingWindow.c'
+		to: srcDir / 'loadingWindow.c'.
+
+	self copy: 'src/loadingWindow_primitives.c'
+		to: srcDir / 'loadingWindow_primitives.c'.
+	
+	self copy: 'src/loadingWindow.m'
+		to: srcDir / 'loadingWindow.m'.
+
 ]
 
 { #category : 'external resources' }
@@ -37,13 +77,16 @@ AppGeneratorOSXGenerator >> externalResourceTargetDirectory [
 
 { #category : 'utilities' }
 AppGeneratorOSXGenerator >> fillWithDefaults [
-	
+
 	super fillWithDefaults.
-	
-	properties at: #BundleIdentifier ifAbsentPut: 'org.pharo.example'.	
-	properties at: #IconSetFile ifAbsentPut: (self templateDirectory / 'icon.icns' ).
-	properties at: #InstallerBackgroundFile ifAbsentPut: (self templateDirectory / 'installer-background.png').
-	
+
+	properties at: #BundleIdentifier ifAbsentPut: 'org.pharo.example'.
+	properties
+		at: #IconSetFile
+		ifAbsentPut: self templateDirectory / 'icon.icns'.
+	properties
+		at: #InstallerBackgroundFile
+		ifAbsentPut: self templateDirectory / 'installer-background.png'.
 ]
 
 { #category : 'translating' }
@@ -59,17 +102,31 @@ AppGeneratorOSXGenerator >> generate [
 		
 	self copyIconSetIn: appDirectory. 
 	self generatePListIn: appDirectory.
-	self copyInstallerBackground.
+
+	self 
+		copyInstallerBackground;
+		copySources;
+		copyIncludes.
 	
-	self generateBuildScript.
+	self 
+		generateBuildScript;
+		generateCMakeScript
 ]
 
 { #category : 'generating' }
 AppGeneratorOSXGenerator >> generateBuildScript [
 
 	self
-		copyTemplate: self templateDirectory / 'build.sh.template'
+		copyTemplate: 'build.sh.template'
 		to: outputDirectory / 'build.sh'
+]
+
+{ #category : 'generation' }
+AppGeneratorOSXGenerator >> generateCMakeScript [
+
+	self
+		copyTemplate: 'CMakeLists.txt.template'
+		to: outputDirectory / 'CMakeLists.txt'
 ]
 
 { #category : 'generating' }
@@ -77,8 +134,26 @@ AppGeneratorOSXGenerator >> generatePListIn: appDirectory [
 
 	(appDirectory / 'Contents') ensureCreateDirectory.
 	self
-		copyTemplate: self templateDirectory / 'Info.plist.template'
+		copyTemplate: 'Info.plist.template'
 		to: appDirectory / 'Contents' / 'Info.plist'
+]
+
+{ #category : 'generating' }
+AppGeneratorOSXGenerator >> generateParametersString [
+
+	| stream collection |
+	collection := (properties at: #Parameters) asOrderedCollection.
+
+	stream := WriteStream on: String crlf.
+	collection do: [ :each |
+			stream
+				nextPut: Character tab;
+				nextPut: Character tab;
+				nextPutAll: '<string>';
+				nextPutAll: each asString;
+				nextPutAll: '</string>';
+				nextPut: Character cr ].
+	properties at: #Parameters put: stream contents
 ]
 
 { #category : 'accessing' }
