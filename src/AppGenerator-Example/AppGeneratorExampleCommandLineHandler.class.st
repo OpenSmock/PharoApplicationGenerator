@@ -13,10 +13,9 @@ AppGeneratorExampleCommandLineHandler class >> commandName [
 
 { #category : 'activation' }
 AppGeneratorExampleCommandLineHandler >> activate [
-
+	
 	OSWindowDriver current startUp: true.
 	
 	AppGeneratorSupport errorHandler: AppGeneratorSDLMessageErrorHandler new.
 	SDL2AthensDrawingExample new open.
-	
 ]

@@ -1,0 +1,94 @@
+cmake_minimum_required(VERSION 4.0)
+
+# Use new and simpler escape sequences
+cmake_policy(SET CMP0053 NEW)
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+
+set(BUILD_ImageName   "{ImageName}") 
+set(BUILD_ChangesName "{ChangesName}") 
+
+#Creating a new project
+project({AppName})
+
+find_package(SDL2)
+
+# Setting the output of the product
+set(EXECUTABLE_OUTPUT_PATH "build/output")
+
+#We set some compiller flags: just to include debugging symbols. 
+set(CMAKE_C_FLAGS "-g")
+set(CMAKE_CXX_FLAGS "-g")
+
+execute_process(COMMAND uname -s
+	WORKING_DIRECTORY $\{CMAKE_SOURCE_DIR}
+	OUTPUT_VARIABLE PLATFORM_NAME
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+execute_process(COMMAND uname -m
+	WORKING_DIRECTORY $\{CMAKE_SOURCE_DIR}
+	OUTPUT_VARIABLE PLATFORM_MACHINE
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+set(PLATFORM $\{PLATFORM_NAME}-$\{PLATFORM_MACHINE})
+
+#
+# This section is to generate the image. 
+# We will have a serie of targets to download the image, download a vm and to load the code.
+#
+
+make_directory($\{CMAKE_CURRENT_BINARY_DIR}/build/vm)
+
+# Adding a task to download the vm
+add_custom_command(
+	OUTPUT 
+		$\{CMAKE_CURRENT_BINARY_DIR}/build/vm/Pharo.app/Contents/MacOS/Plugins/libPharoVMCore.dylib
+		$\{CMAKE_CURRENT_BINARY_DIR}/build/vm/Pharo.app/Contents/MacOS/Plugins/libSDL2.dylib
+	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/$\{PLATFORM}/{VMZipFile}
+	COMMAND unzip {VMZipFile}
+	COMMAND rm {VMZipFile}
+	WORKING_DIRECTORY $\{CMAKE_CURRENT_BINARY_DIR}/build/vm
+	COMMENT "Downloading Pharo VM (headless)")
+
+#
+# This section download the header files and to extract the libs from the VM. 
+#
+add_custom_command(
+	OUTPUT  $\{CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
+	COMMAND wget http://files.pharo.org/vm/pharo-spur64-headless/$\{PLATFORM}/include/{VMIncludeZipFile}
+	COMMAND unzip {VMIncludeZipFile}
+	COMMAND rm {VMIncludeZipFile}
+	WORKING_DIRECTORY $\{CMAKE_CURRENT_BINARY_DIR}/build
+	COMMENT "Downloading Pharo VM Headers")
+
+#Setting the include directories
+# - The includes in this project
+# - The includes from the VM code
+include_directories(
+	$\{CMAKE_CURRENT_SOURCE_DIR}/include
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/include/
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm
+	$\{SDL2_INCLUDE_DIRS})
+
+set(CLIENT_DEPS
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/vm/Pharo.app/Contents/MacOS/Plugins/libSDL2.dylib
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/vm/Pharo.app/Contents/MacOS/Plugins/libPharoVMCore.dylib
+	$\{CMAKE_CURRENT_BINARY_DIR}/build/include/pharovm/pharo.h
+)
+
+set(CLIENT_SOURCES
+	src/loadingWindow_primitives.c
+	src/loadingWindow.c
+	src/loadingWindow.m
+	src/main.c)
+
+# We declare the executable.
+add_executable({AppName} $\{CLIENT_DEPS} $\{CLIENT_SOURCES})
+
+# We link the executable with the VM library.
+target_link_directories({AppName} PUBLIC $\{CMAKE_CURRENT_BINARY_DIR}/build/vm/Pharo.app/Contents/MacOS/Plugins/)
+target_link_libraries({AppName} "-framework AppKit")
+target_link_libraries({AppName} PharoVMCore)
+target_link_libraries({AppName} SDL2)

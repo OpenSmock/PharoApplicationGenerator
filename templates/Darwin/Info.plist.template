@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleExecutable</key>
-	<string>Pharo</string>
+	<string>{AppName}</string>
 	<key>CFBundleGetInfoString</key>
 	<string>{InfoString}</string>
 	<key>CFBundleIconFile</key>
@@ -35,7 +35,7 @@
 	<key>PharoImageFile</key>
 	<string>{ImageName}</string>
 	<key>PharoImageParameters</key>
-	<array>
+	<array>{Parameters}
 		<string>{CommandLineHandler}</string>
 		<string>--embedded</string>
 	</array>

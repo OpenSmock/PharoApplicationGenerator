@@ -9,13 +9,6 @@ Class {
 }
 
 { #category : 'copying' }
-AppGeneratorWindowsGenerator >> copy: source to: dest [
-
-	dest ensureDelete.
-	source copyTo: dest
-]
-
-{ #category : 'copying' }
 AppGeneratorWindowsGenerator >> copyIcon [
 
 	self copy: self iconFile to: outputDirectory / 'icon.ico'
@@ -28,28 +21,27 @@ AppGeneratorWindowsGenerator >> copyIncludes [
 	includeDir := outputDirectory / 'include'.
 	includeDir ensureCreateDirectory.
 	
-	self copy: self templateDirectory / 'include' / 'resources.h' to: includeDir / 'resources.h'.
+	self copy: 'include/resources.h' to: includeDir / 'resources.h'.
 ]
 
 { #category : 'copying' }
 AppGeneratorWindowsGenerator >> copySources [
 
-	| srcDir templateSrc |
+	| srcDir |
 
-	templateSrc := self templateDirectory / 'src'.
 	srcDir := outputDirectory / 'src'.
 	srcDir ensureCreateDirectory.
 
 	self
-		copy: templateSrc / 'embeddedImage.c'
+		copy: 'src/embeddedImage.c'
 		to: srcDir / 'embeddedImage.c'.
 
 	self
-		copyTemplate: templateSrc / 'resources.rc.in'
+		copyTemplate: 'src/resources.rc.in'
 		to: srcDir / 'resources.rc.in'.
 
 	self
-		copyTemplate: templateSrc / 'main.c.template'
+		copyTemplate: 'src/main.c.template'
 		to: srcDir / 'main.c'
 ]
 
@@ -118,7 +110,7 @@ AppGeneratorWindowsGenerator >> generateArtifactScript [
 AppGeneratorWindowsGenerator >> generateCMakeScript [
 
 	self
-		copyTemplate: self templateDirectory / 'CMakeLists.txt.template'
+		copyTemplate: 'CMakeLists.txt.template'
 		to: outputDirectory / 'CMakeLists.txt'
 ]
 
@@ -126,15 +118,30 @@ AppGeneratorWindowsGenerator >> generateCMakeScript [
 AppGeneratorWindowsGenerator >> generateInstallerScript [
 
 	self
-		copyTemplate: self templateDirectory / 'buildWindowsPackage.ps1.template'
+		copyTemplate: 'buildWindowsPackage.ps1.template'
 		to: outputDirectory / 'buildWindowsPackage.ps1'
+]
+
+{ #category : 'accessing' }
+AppGeneratorWindowsGenerator >> generateParametersString [
+
+	| stream collection |
+	collection := (properties at: #Parameters) asOrderedCollection.
+
+	stream := WriteStream on: String new.
+	collection do: [ :each |
+			stream
+				nextPutAll: ', "' ;
+				nextPutAll: each asString;
+				nextPutAll: '"'].
+	properties at: #Parameters put: stream contents
 ]
 
 { #category : 'generation' }
 AppGeneratorWindowsGenerator >> generateZipScript [
 
 	self
-		copyTemplate: self templateDirectory / 'buildZip.ps1.template'
+		copyTemplate: 'buildZip.ps1.template'
 		to: outputDirectory / 'buildZip.ps1'
 ]
 

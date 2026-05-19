@@ -63,6 +63,19 @@ AppGeneratorAbstractGenerator >> appName [
 	^ properties at: #AppName
 ]
 
+{ #category : 'accessing' }
+AppGeneratorAbstractGenerator >> commonTemplateDirectory [
+	
+	^ self class repositoryLocation / 'templates' / 'common'
+]
+
+{ #category : 'copying' }
+AppGeneratorAbstractGenerator >> copy: source to: dest [
+
+	dest ensureDelete.
+	(self resolveSource: source asFileReference) copyTo: dest
+]
+
 { #category : 'external resources' }
 AppGeneratorAbstractGenerator >> copyExternalResources [
 	
@@ -77,7 +90,7 @@ AppGeneratorAbstractGenerator >> copyExternalResources [
 AppGeneratorAbstractGenerator >> copyTemplate: inputTemplate to: outputFile [
 
 	| generatedContent template |
-	template := inputTemplate contents.
+	template := (self resolveSource: inputTemplate asFileReference) contents.
 	generatedContent := template format: properties.
 	outputFile writeStreamDo: [ :s |
 		s truncate.
@@ -92,7 +105,7 @@ AppGeneratorAbstractGenerator >> externalResourceTargetDirectory [
 
 { #category : 'utilities' }
 AppGeneratorAbstractGenerator >> fillWithDefaults [
-	
+
 	properties at: #AppName ifAbsentPut: 'MyApp'.
 	properties at: #InfoString ifAbsentPut: 'My Test Application'.
 
@@ -101,16 +114,44 @@ AppGeneratorAbstractGenerator >> fillWithDefaults [
 	properties at: #DisplayName ifAbsentPut: 'My App'.
 
 	properties at: #ImageFile ifAbsentPut: Smalltalk imageFile.
-	properties at: #ImageName ifAbsentPut: (properties at: #ImageFile) basename.
-	properties at: #ImageDir ifAbsentPut: (properties at: #ImageFile) resolve parent fullName.
-	properties at: #ChangesName ifAbsentPut: ((properties at: #ImageFile) resolve withExtension: 'changes') basename.
+	properties
+		at: #ImageName
+		ifAbsentPut: (properties at: #ImageFile) basename.
+	properties
+		at: #ImageDir
+		ifAbsentPut: (properties at: #ImageFile) resolve parent fullName.
+	properties
+		at: #ChangesName
+		ifAbsentPut:
+			((properties at: #ImageFile) resolve withExtension: 'changes')
+				basename.
 
 	properties at: #CommandLineHandler ifAbsentPut: 'appGeneratorExample'.
 
-	properties at: #VMIncludeZipFile ifAbsentPut: 'latest10.zip'.	
+	properties at: #VMIncludeZipFile ifAbsentPut: 'latest10.zip'.
 	properties at: #VMZipFile ifAbsentPut: 'latest10.zip'.
-	properties at: #VMType ifAbsentPut: 'headless'
-
+	properties at: #VMType ifAbsentPut: 'headless'.
+	
+	"If the VM is headless we will not be in InteractiveSession"
+	(properties at: #VMType) = 'headless' 
+		ifTrue: [ properties at: #IsInteractiveSession ifAbsentPut: false ]
+		ifFalse: [ properties at: #IsInteractiveSession ifAbsentPut: true ].
+	
+	properties at: #LoadingWindow ifAbsentPut: false.
+	properties at: #LoadingWindowBarX ifAbsentPut: 0.
+	properties at: #LoadingWindowBarY ifAbsentPut: 0.
+	properties at: #LoadingWindowBarWidth ifAbsentPut: 0.
+	properties at: #LoadingWindowBarHeight ifAbsentPut: 0.
+	properties at: #LoadingWindowBarMargin ifAbsentPut: 0.
+	properties at: #LoadingWindowImageLoadingPercentage ifAbsentPut: 0.
+	properties at: #LoadingWindowImage ifAbsentPut: ''.
+	properties at: #LoadingWindowBarColorRed ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorGreen ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorBlue ifAbsentPut: 0.
+	properties at: #LoadingWindowBarColorAlpha ifAbsentPut: 255.
+	
+	properties at: #Parameters ifAbsentPut: #(  ).
+	self generateParametersString
 ]
 
 { #category : 'translating' }
@@ -121,6 +162,12 @@ AppGeneratorAbstractGenerator >> generate [
 	outputDirectory ensureCreateDirectory. 
 	self copyExternalResources
 
+]
+
+{ #category : 'utilities' }
+AppGeneratorAbstractGenerator >> generateParametersString [
+
+	self shouldBeImplemented.
 ]
 
 { #category : 'initialization' }
@@ -140,6 +187,28 @@ AppGeneratorAbstractGenerator >> outputDirectory: aFileReference [
 AppGeneratorAbstractGenerator >> properties: aCollection [ 
 	
 	properties := aCollection
+]
+
+{ #category : 'as yet unclassified' }
+AppGeneratorAbstractGenerator >> resolveSource: aFileReference [
+
+	| templateBased commonBased |
+
+	aFileReference exists ifTrue: [ ^ aFileReference ].
+
+	templateBased := self templateDirectory withPath:
+		                 (self templateDirectory path resolvePath:
+			                  aFileReference path).
+
+	templateBased exists ifTrue: [ ^ templateBased ].
+
+	commonBased := self commonTemplateDirectory withPath:
+		               (self commonTemplateDirectory path resolvePath:
+			                aFileReference path).
+			
+	commonBased exists ifTrue: [ ^ commonBased ].
+	
+	self error: ('Could not find in {1}, {2} or {3}') format: { aFileReference. templateBased. commonBased }. 
 ]
 
 { #category : 'accessing' }

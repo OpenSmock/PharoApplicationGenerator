@@ -1,0 +1,17 @@
+#pragma once
+
+#define LOADING_BAR_SHOW						{LoadingWindow}
+
+#define LOADING_BAR_X							{LoadingWindowBarX}
+#define LOADING_BAR_Y							{LoadingWindowBarY}
+#define LOADING_BAR_WIDTH						{LoadingWindowBarWidth}
+#define LOADING_BAR_HEIGHT						{LoadingWindowBarHeight}
+#define LOADING_BAR_MARGIN						{LoadingWindowBarMargin}
+#define LOADING_BAR_IMAGE_LOADING_PERCENTAGE	{LoadingWindowImageLoadingPercentage}
+
+#define LOADING_WINDOW_IMAGE					"{LoadingWindowImage}"
+
+#define LOADING_BAR_COLOR_R						{LoadingWindowBarColorRed}
+#define LOADING_BAR_COLOR_G						{LoadingWindowBarColorGreen}
+#define LOADING_BAR_COLOR_B						{LoadingWindowBarColorBlue}
+#define LOADING_BAR_COLOR_A						{LoadingWindowBarColorAlpha}
