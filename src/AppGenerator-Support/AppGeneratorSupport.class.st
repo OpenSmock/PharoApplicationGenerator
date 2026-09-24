@@ -34,7 +34,7 @@ AppGeneratorSupport class >> errorHandler: anErrorHandler [
 { #category : 'testing' }
 AppGeneratorSupport class >> isEmbedded [ 
 
-	^ Smalltalk argumentsInclude: '--embedded'
+	^ (Smalltalk argumentsStartingAtIndex: 0) includes: '--embedded'
 		
 ]
 
